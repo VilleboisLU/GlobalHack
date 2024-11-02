@@ -7,16 +7,18 @@ QT = core network
 CONFIG += console
 
 HEADERS += \
+           src/controller/apiwork.h \
            src/global.h \
            src/requestmapper.h \
            src/controller/dumpcontroller.h \
-           src/controller/templatecontroller.h \
+           src/controller/templatecontroller.h
 
 SOURCES += src/main.cpp \
+           src/controller/apiwork.cpp \
            src/global.cpp \
            src/requestmapper.cpp \
            src/controller/dumpcontroller.cpp \
-           src/controller/templatecontroller.cpp \
+           src/controller/templatecontroller.cpp
 
 OTHER_FILES += etc/* etc/docroot/* etc/templates/* etc/ssl/* logs/*
 

@@ -10,6 +10,11 @@
 #include "staticfilecontroller.h"
 #include "controller/dumpcontroller.h"
 #include "controller/templatecontroller.h"
+#include "controller/formcontroller.h"
+#include "controller/fileuploadcontroller.h"
+#include "controller/sessioncontroller.h"
+#include "controller/logincontroller.h"
+
 RequestMapper::RequestMapper(QObject* parent)
     :HttpRequestHandler(parent)
 {
@@ -30,16 +35,14 @@ void RequestMapper::service(HttpRequest& request, HttpResponse& response)
 
     // For the following pathes, each request gets its own new instance of the related controller.
 
-    if (path.startsWith("/dump"))
+    if (path.startsWith("/"))
     {        
         DumpController().service(request, response);
     }
-
     else if (path.startsWith("/template"))
     {
         TemplateController().service(request, response);
     }
-
     // All other pathes are mapped to the static file controller.
     // In this case, a single instance is used for multiple requests.
     else

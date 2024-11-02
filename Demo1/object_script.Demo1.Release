@@ -1,12 +1,8 @@
 release/main.o
-release/logincontroller.o
 release/global.o
 release/requestmapper.o
 release/dumpcontroller.o
 release/templatecontroller.o
-release/formcontroller.o
-release/fileuploadcontroller.o
-release/sessioncontroller.o
 release/logmessage.o
 release/logger.o
 release/filelogger.o
@@ -25,13 +21,9 @@ release/staticfilecontroller.o
 release/template.o
 release/templateloader.o
 release/templatecache.o
-release/moc_logincontroller.o
 release/moc_requestmapper.o
 release/moc_dumpcontroller.o
 release/moc_templatecontroller.o
-release/moc_formcontroller.o
-release/moc_fileuploadcontroller.o
-release/moc_sessioncontroller.o
 release/moc_logger.o
 release/moc_filelogger.o
 release/moc_dualfilelogger.o

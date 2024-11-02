@@ -1,12 +1,8 @@
 debug/main.o
-debug/logincontroller.o
 debug/global.o
 debug/requestmapper.o
 debug/dumpcontroller.o
 debug/templatecontroller.o
-debug/formcontroller.o
-debug/fileuploadcontroller.o
-debug/sessioncontroller.o
 debug/logmessage.o
 debug/logger.o
 debug/filelogger.o
@@ -25,13 +21,9 @@ debug/staticfilecontroller.o
 debug/template.o
 debug/templateloader.o
 debug/templatecache.o
-debug/moc_logincontroller.o
 debug/moc_requestmapper.o
 debug/moc_dumpcontroller.o
 debug/moc_templatecontroller.o
-debug/moc_formcontroller.o
-debug/moc_fileuploadcontroller.o
-debug/moc_sessioncontroller.o
 debug/moc_logger.o
 debug/moc_filelogger.o
 debug/moc_dualfilelogger.o
