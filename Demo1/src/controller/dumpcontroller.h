@@ -9,6 +9,7 @@
 #include "httprequest.h"
 #include "httpresponse.h"
 #include "httprequesthandler.h"
+#include "apiwork.h"
 #include <QNetworkAccessManager>
 #include <QNetworkReply>
 #include <QNetworkRequest>

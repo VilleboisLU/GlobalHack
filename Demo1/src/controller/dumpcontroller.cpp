@@ -21,10 +21,10 @@ void DumpController::service(HttpRequest& request, HttpResponse& response)
     netMan = new QNetworkAccessManager(this);
     QObject::connect(netMan, &QNetworkAccessManager::finished, this, &DumpController::onResult);
 
-    QUrl urlRes("https://mts-aidocprocessing-case.olymp.innopolis.university");
-    QUrl urlTok("https://mts-aidocprocessing-case.olymp.innopolis.university");
-    QUrl urlDet("https://mts-aidocprocessing-case.olymp.innopolis.university");
-    QUrl urlEmb("https://mts-aidocprocessing-case.olymp.innopolis.university");
+    QUrl urlRes("https://innoglobalhack-general.olymp.innopolis.university/v1/completions");
+    QUrl urlTok("https://innoglobalhack-general.olymp.innopolis.university/tokenize");
+    QUrl urlDet("https://innoglobalhack-general.olymp.innopolis.university/detokenize");
+    QUrl urlEmb("https://innoglobalhack-general.olymp.innopolis.university/v1/embeddings");
 
     //Создание запроса к Api языковой модели
     QByteArray reqdata;
@@ -32,12 +32,18 @@ void DumpController::service(HttpRequest& request, HttpResponse& response)
     QNetworkRequest req(urlRes);
     netMan->post(req,reqdata);
 
+    QJsonObject val;
+    APIWork api;
+    QByteArray body;
+    body = api.Algorithm(val);
+
+
     response.setHeader("Content-Type", "json");
     //response.setCookie(HttpCookie("firstCookie","hello",600,QByteArray(),QByteArray(),QByteArray(),false,true));
     //response.setCookie(HttpCookie("secondCookie","world",600));
 
     //Создание Json для ответа на запрос фронта
-    QByteArray body("{\"defalt\":\"False\"}");
+
     response.write(body,true);
 }
 
