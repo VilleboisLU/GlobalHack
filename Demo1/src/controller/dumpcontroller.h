@@ -33,6 +33,7 @@ class DumpController : public HttpRequestHandler {
     Q_DISABLE_COPY(DumpController)
 private:
     QNetworkAccessManager *netMan;
+    QByteArray result;
 private slots:
 public:
 

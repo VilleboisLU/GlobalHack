@@ -9,7 +9,6 @@
 #include <QThread>
 #include <QCoreApplication>
 
-
 DumpController::DumpController()
 {}
 
@@ -24,40 +23,47 @@ void DumpController::service(HttpRequest& request, HttpResponse& response)
     QUrl urlDet("https://innoglobalhack-general.olymp.innopolis.university/detokenize");
     QUrl urlEmb("https://innoglobalhack-general.olymp.innopolis.university/v1/embeddings");
     QJsonObject ApiTokenize;
-    QJsonObject Massege;
-    QString role = "user";
-    Massege.insert("role", role);
-    Massege.insert("content", question);
-    QJsonArray Messages;
-    Messages.append(Massege);
-    ApiTokenize.insert("model", "meta-llama/Llama-3.2-11B-Vision-Instruct");
     ApiTokenize.insert("add_special_tokens", true);
-    ApiTokenize.insert("messages", Messages);
+    ApiTokenize.insert("inputs", question);
+    ApiTokenize.insert("prompt_name", QJsonValue::Null);
+
 
     QJsonDocument doc(ApiTokenize);
-    QByteArray res = doc.toJson(QJsonDocument::Compact);
+    QByteArray res = doc.toJson();
+    //response.setHeader("Content-Type", "application/json");
+    //response.write(res,true);
+    QEventLoop eventLoop;
     netMan = new QNetworkAccessManager();
-    QUrl urlTok("https://innoglobalhack-general.olymp.innopolis.university/tokenize");
-    QNetworkRequest req(urlTok);
-    req.setHeader(QNetworkRequest::ContentTypeHeader, QVariant("application/json"));
-    QByteArray result;
-    QNetworkReply *rep = netMan->post(req,res);
-    QObject::connect(rep, &QNetworkReply::finished, this, [=](){
-        if(rep->error() == QNetworkReply::NoError){
-            QString contents = QString::fromUtf8(rep->readAll());
-            qDebug()<<rep->errorString();
-            qDebug() << contents;
-            return contents.toUtf8();
-        }
-        else{
-            QString err = rep->errorString();
-            qDebug() << err;
-        }
-        return rep->errorString().toUtf8();
-        rep->deleteLater();
-        });
+    QObject::connect(netMan, SIGNAL(finished(QNetworkReply*)), &eventLoop, SLOT(quit()));
+
+    QSslConfiguration sslConfig = QSslConfiguration::defaultConfiguration();
+    sslConfig.setProtocol(QSsl::TlsV1_0);
+    sslConfig.setPeerVerifyMode(QSslSocket::VerifyPeer);
+
+    QFile ca("RootCA.crt");
+    if (ca.open(QIODevice::ReadOnly))
+    {
+      QSslCertificate cert = QSslCertificate(&ca);
+      QList <QSslCertificate> caList;
+      caList.append(cert);
+      sslConfig.setCaCertificates(caList);
+    }
+
+    QNetworkRequest req;
+    req.setUrl(QUrl( QString("https://mts-aidocprocessing-case-embedder.olymp.innopolis.university/tokenize") ));
+    req.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
+    req.setSslConfiguration(sslConfig);
+
+    QNetworkReply *reply = netMan->post(req, res);
+    eventLoop.exec();
+
+    if (reply->error() == QNetworkReply::NoError)
+    {
+        result = reply->readAll();
+    }
+
     response.setHeader("Content-Type", "application/json");
     response.write(result,true);
 
-    //response.write(body,true);
+
 }
