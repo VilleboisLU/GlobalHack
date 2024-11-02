@@ -20,6 +20,7 @@
 #include <QJsonValue>
 #include <QJsonParseError>
 #include <QUrlQuery>
+#include <QDebug>
 
 using namespace stefanfrings;
 
@@ -33,7 +34,6 @@ class DumpController : public HttpRequestHandler {
 private:
     QNetworkAccessManager *netMan;
 private slots:
-    void onResult(QNetworkReply *);
 public:
 
     /** Constructor */
@@ -43,7 +43,6 @@ public:
     /** Generates the response */
     void service(HttpRequest& request, HttpResponse& response);
 };
-
 
 
 #endif // DUMPCONTROLLER_H

@@ -16,43 +16,48 @@ DumpController::DumpController()
 void DumpController::service(HttpRequest& request, HttpResponse& response)
 {
     QByteArray frontrequest = request.getBody();
-    //response.write(frontrequest,true);
+    QJsonDocument jsonResponse = QJsonDocument::fromJson(frontrequest);
+    QJsonObject obj = jsonResponse.object();
+    QString question = obj.value("content").toString();
     //Подключение к Api языковой модели
-    netMan = new QNetworkAccessManager(this);
-    QObject::connect(netMan, &QNetworkAccessManager::finished, this, &DumpController::onResult);
-
     QUrl urlRes("https://innoglobalhack-general.olymp.innopolis.university/v1/completions");
-    QUrl urlTok("https://innoglobalhack-general.olymp.innopolis.university/tokenize");
     QUrl urlDet("https://innoglobalhack-general.olymp.innopolis.university/detokenize");
     QUrl urlEmb("https://innoglobalhack-general.olymp.innopolis.university/v1/embeddings");
+    QJsonObject ApiTokenize;
+    QJsonObject Massege;
+    QString role = "user";
+    Massege.insert("role", role);
+    Massege.insert("content", question);
+    QJsonArray Messages;
+    Messages.append(Massege);
+    ApiTokenize.insert("model", "meta-llama/Llama-3.2-11B-Vision-Instruct");
+    ApiTokenize.insert("add_special_tokens", true);
+    ApiTokenize.insert("messages", Messages);
 
-    //Создание запроса к Api языковой модели
-    QByteArray reqdata;
-    //reqdata.append();
-    QNetworkRequest req(urlRes);
-    netMan->post(req,reqdata);
+    QJsonDocument doc(ApiTokenize);
+    QByteArray res = doc.toJson(QJsonDocument::Compact);
+    netMan = new QNetworkAccessManager();
+    QUrl urlTok("https://innoglobalhack-general.olymp.innopolis.university/tokenize");
+    QNetworkRequest req(urlTok);
+    req.setHeader(QNetworkRequest::ContentTypeHeader, QVariant("application/json"));
+    QByteArray result;
+    QNetworkReply *rep = netMan->post(req,res);
+    QObject::connect(rep, &QNetworkReply::finished, this, [=](){
+        if(rep->error() == QNetworkReply::NoError){
+            QString contents = QString::fromUtf8(rep->readAll());
+            qDebug()<<rep->errorString();
+            qDebug() << contents;
+            return contents.toUtf8();
+        }
+        else{
+            QString err = rep->errorString();
+            qDebug() << err;
+        }
+        return rep->errorString().toUtf8();
+        rep->deleteLater();
+        });
+    response.setHeader("Content-Type", "application/json");
+    response.write(result,true);
 
-    QJsonObject val;
-    APIWork api;
-    QByteArray body;
-    body = api.Algorithm(val);
-
-
-    response.setHeader("Content-Type", "json");
-    //response.setCookie(HttpCookie("firstCookie","hello",600,QByteArray(),QByteArray(),QByteArray(),false,true));
-    //response.setCookie(HttpCookie("secondCookie","world",600));
-
-    //Создание Json для ответа на запрос фронта
-
-    response.write(body,true);
-}
-
-void DumpController::onResult(QNetworkReply *repl){
-    if(repl->error() == QNetworkReply::NoError){
-
-            QByteArray result = repl->readAll();
-            QJsonDocument jsonResponse = QJsonDocument::fromJson(result);
-            QJsonObject obj = jsonResponse.object();
-            //qDebug() << obj;
-    }
+    //response.write(body,true);
 }

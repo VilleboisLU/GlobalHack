@@ -27,4 +27,5 @@ public:
     QByteArray Algorithm(QJsonObject&);
 };
 
+
 #endif // APIWORK_H

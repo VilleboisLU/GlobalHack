@@ -1,0 +1,10 @@
+{
+    "add_special_tokens": true,
+    "messages": [
+        {
+            "content": "Hello, can you tell me a fun fact about cats?",
+            "role": "user"
+        }
+    ],
+    "model": "meta-llama/Llama-3.2-11B-Vision-Instruct"
+}
